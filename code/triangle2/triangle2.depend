@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1523027163 source:/home/vmcdermott/Documents/Spring2018/SoftSys/3DFractalMountains/code/triangle2/main.c
+	<stdio.h>
+	<stdlib.h>
+	<GL/glx.h>
+	<GL/gl.h>
+	<X11/X.h>
+	<X11/keysym.h>
+
