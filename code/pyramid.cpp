@@ -38,37 +38,45 @@ void drawCube()
     glRotatef( rX, 1.0, 0.0, 0.0 );
     glRotatef( rY, 0.0, 1.0, 0.0 );
 
+    // bottom of the pyramid
     glBegin(GL_TRIANGLES);
+        glColor3f(0.4, 0.3, 0.5);
             glVertex3f(0.4, 0.4, 0);
             glVertex3f(0.4, -0.4, 0);
             glVertex3f(-0.4, 0.4, 0);
     glEnd();
 
     glBegin(GL_TRIANGLES);
+    glColor3f(0.4, 0.3, 0.5);
             glVertex3f(-0.4, 0.4, 0);
             glVertex3f(-0.4, -0.4, 0);
             glVertex3f(0.4, -0.4, 0);
     glEnd();
 
+    // sides of the pyramid
     glBegin(GL_TRIANGLES);
+    glColor3f(0.1, 0.5, 0.3);
             glVertex3f(-0.4, 0.4, 0);
             glVertex3f(-0.4, -0.4, 0);
             glVertex3f(0, 0, 1);
     glEnd();
 
     glBegin(GL_TRIANGLES);
+    glColor3f(0.0, 0.5, 0.0);
             glVertex3f(0.4, 0.4, 0);
             glVertex3f(0.4, -0.4, 0);
             glVertex3f(0, 0, 1);
     glEnd();
 
     glBegin(GL_TRIANGLES);
+    glColor3f(0.1, 0.3, 0.3);
             glVertex3f(-0.4, 0.4, 0);
             glVertex3f(0.4, 0.4, 0);
             glVertex3f(0, 0, 1);
     glEnd();
 
     glBegin(GL_TRIANGLES);
+    glColor3f(0.2, 0.2, 0.2);
             glVertex3f(-0.4, -0.4, 0);
             glVertex3f(0.4, -0.4, 0);
             glVertex3f(0.4, -0.4, 0);
