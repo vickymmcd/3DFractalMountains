@@ -6,7 +6,7 @@ void init(void)
 {
    GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
    GLfloat mat_shininess[] = { 50.0 };
-   GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
+   GLfloat light_position[] = { 10, 10, 10, 1 };
    glClearColor (0.0, 0.0, 0.0, 0.0);
    glShadeModel (GL_SMOOTH);
 
@@ -14,15 +14,22 @@ void init(void)
    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
-   glEnable(GL_LIGHTING);
-   glEnable(GL_LIGHT0);
-   glEnable(GL_DEPTH_TEST);
+   //glEnable(GL_LIGHTING);
+   //glEnable(GL_LIGHT0);
+   //glEnable(GL_DEPTH_TEST);
 }
 
 void display(void)
 {
    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   glutSolidSphere (1.0, 20, 16);
+   glutSolidSphere (.4, 20, 16);
+   // bottom of the pyramid
+   glBegin(GL_TRIANGLES);
+           glVertex3f(0.4, 0.4, 0);
+           glVertex3f(0.4, -0.4, 0);
+           glVertex3f(-0.4, 0.4, 0);
+   glEnd();
+
    glFlush ();
 }
 
