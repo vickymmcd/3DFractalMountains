@@ -101,7 +101,7 @@ void smoothing(Matrix *matrix){
 			if (matrix->rows[row][col] == 0){
 				
 				double smooth = indiv_smoothing(matrix, row, col);
-				printf("Smoothing to: %d\n", smooth);
+				printf("Smoothing to: %f\n", smooth);
 				matrix->rows[row][col] = smooth;
 			}
 		}
@@ -138,7 +138,7 @@ void square_step(Matrix *matrix, int grid_split, int sideLength, int N){
 		}
 	}
 	int size = matrix->num_cols;
-	matrix->rows[size/2][size/2] = 500;
+	matrix->rows[size/2][size/2] = 255;
 }
 
 void diamond_step(Matrix *matrix, int grid_split, int sideLength, int N, int max_index){
@@ -224,7 +224,7 @@ Matrix* init_matrix(int size){
     }
     matrix->rows[0][0] = 10;
     matrix->rows[0][size-1] = 10;
-    matrix->rows[size/2][size/2] = 500;
+    matrix->rows[size/2][size/2] = 255;
     matrix->rows[size-1][0] = 10;
     matrix->rows[size-1][size-1] = 10;
     return matrix;
@@ -237,7 +237,7 @@ Matrix* make_mountain(int sizeM){
     int size = matrix->num_cols-1;
     int ds_steps = 7;
     int num_quad = 1;
-    double roughness = 100;
+    double roughness = 50;
     int grid_split = 1;
 
     int max_index = size;//(int) pow(2.0, ds_steps);
@@ -259,15 +259,14 @@ Matrix* make_mountain(int sizeM){
 }
 
 
-/*
 int main () {
-	Matrix *matrix = make_mountain(77);
+	Matrix *matrix = make_mountain(17);
 
     print_matrix(matrix);
     printf("Size of matrix: %d\n", matrix->num_rows);
     free_matrix(matrix);
 }
-*/
+
 /*
 To make mountain:
 size = 17 - ds_steps = 4
