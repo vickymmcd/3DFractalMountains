@@ -22,7 +22,7 @@ Settings CONFIG = {
 	1,    // generate base (walls and bottom)
 	0,    // binary output
 	NULL, // read from stdin
-	NULL, // write to stdout
+	"ourhm.stl", // write to stdout
 	NULL, // no mask
 	127,  // middle of 8 bit range
 	0,    // normal un-reversed mask
