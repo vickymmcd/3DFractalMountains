@@ -3,5 +3,5 @@ typedef struct {
     double **rows;
 } Matrix;
 
-Matrix* make_mountain(int sizeM);
+Matrix* make_mountain(int sizeM, int steps);
 void print_matrix(Matrix *matrix);
