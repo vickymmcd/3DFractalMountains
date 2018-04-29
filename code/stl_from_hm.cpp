@@ -292,6 +292,5 @@ int HeightmapToSTL(Matrix *hm) {
 
 int main(){
   Matrix *hm = make_mountain(37,3);
-	print_matrix(hm);
   HeightmapToSTL(hm);
 }

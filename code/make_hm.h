@@ -2,6 +2,7 @@
 
 typedef struct {
     int num_rows, num_cols;
+    int height;
     double **rows;
 } Matrix;
 

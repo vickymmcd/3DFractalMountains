@@ -26,7 +26,7 @@ Matrix *make_matrix(int num_rows, int num_cols, int height) {
     Matrix *matrix = (Matrix*)malloc(sizeof(Matrix));
     matrix->num_rows = num_rows;
     matrix->num_cols = num_cols;
-    //matrix->height = height;
+    matrix->height = height;
     matrix->rows = (double**)malloc(num_rows * sizeof(double*));
     for (int i=0; i<num_rows; i++) {
         matrix->rows[i] = (double*)calloc(num_cols, sizeof(double));
@@ -226,7 +226,7 @@ Matrix* init_matrix(int size){
     }
     matrix->rows[0][0] = 0;
     matrix->rows[0][size-1] = 0;
-    matrix->rows[size/2][size/2] = 30;
+    matrix->rows[size/2][size/2] = matrix->height;
     matrix->rows[size-1][0] = 0;
     matrix->rows[size-1][size-1] = 0;
     return matrix;
@@ -263,7 +263,7 @@ Matrix* make_mountain(int sizeM, int steps){
 
         square_step(matrix, grid_split, sideLength, loRough);
         //int size = matrix->num_cols;
-        matrix->rows[size/2][size/2] = 30;
+        matrix->rows[size/2][size/2] = matrix->height;
         diamond_step(matrix, grid_split, sideLength, loRough, max_index);
 
         sideLength /= 2;
