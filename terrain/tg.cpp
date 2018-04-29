@@ -385,7 +385,7 @@ int main(int argc, char **argv)
 	// 	printf("error loading heightmap\n");
 	// 	return(-1);
 	// }
-	if (terrainLoadFromHeightmap(17) != TERRAIN_OK) {
+	if (terrainLoadFromHeightmap(37) != TERRAIN_OK) {
 		printf("error loading heightmap\n");
 		return(-1);
 	}

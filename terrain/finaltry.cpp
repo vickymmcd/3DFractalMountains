@@ -67,6 +67,50 @@ int random_int(int min, int max)
    //return min + rand() % (max+1 - min);
 }
 
+double indiv_smoothing(Matrix *matrix, int row, int col){
+	int size = matrix->num_cols;
+	double sum =0;
+	double nAverage = 0;
+	if (row+1<size){
+		if (col+1<size){
+			nAverage+=1;
+			sum += matrix->rows[row+1][col+1];
+		}
+		if (col-1>=0){
+			nAverage+=1;
+			sum += matrix->rows[row+1][col-1];
+		}
+	}
+	if (row-1>=0){
+		if (col+1<size){
+			nAverage+=1;
+			sum += matrix->rows[row-1][col+1];
+		}
+		if (col-1>=0){
+			nAverage+=1;
+			sum += matrix->rows[row-1][col-1];
+		}
+	}
+	return sum/nAverage;
+}
+
+void smoothing(Matrix *matrix){
+	int size = matrix->num_cols;
+	for(int row=0; row<size; row++){
+		for (int col = 0; col<size; col++){
+			if (matrix->rows[row][col] == 0){
+
+				double smooth = indiv_smoothing(matrix, row, col);
+				printf("Smoothing to: %f\n", smooth);
+				matrix->rows[row][col] = smooth;
+			}
+		}
+	}
+}
+
+
+
+
 void square_step(Matrix *matrix, int grid_split, int sideLength, int N){
 
 	for (int i = 0; i<grid_split; i++){
@@ -93,8 +137,8 @@ void square_step(Matrix *matrix, int grid_split, int sideLength, int N){
         	}
 		}
 	}
-	int size = matrix->num_cols;
-	matrix->rows[size/2][size/2] = 500;
+	//int size = matrix->num_cols;
+	//matrix->rows[size/2][size/2] = 30;
 }
 
 void diamond_step(Matrix *matrix, int grid_split, int sideLength, int N, int max_index){
@@ -144,7 +188,7 @@ void diamond_step(Matrix *matrix, int grid_split, int sideLength, int N, int max
             	avg = (double) sum/4.0;
                 matrix->rows[j_min][i_mid] = avg + random_int(-N,N);
             }
-            
+
             //Right Diamond - wraps if at edge.
             if (j_max == max_index){
                 temp = 0 + halfSide;
@@ -167,56 +211,120 @@ void diamond_step(Matrix *matrix, int grid_split, int sideLength, int N, int max
             matrix->rows[j_mid][i_max] = avg + random_int(-N,N);
 		}
 
-	}		
+	}
 }
 
 Matrix* init_matrix(int size){
 	Matrix *matrix = make_matrix(size, size);
-    
+
     for (int i=0; i<matrix->num_rows; i++) {
         for (int j=0; j<matrix->num_cols; j++) {
             matrix->rows[i][j] = 0;
         }
     }
-    matrix->rows[0][0] = 10;
-    matrix->rows[0][size-1] = 10;
-    matrix->rows[size/2][size/2] = 500;
-    matrix->rows[size-1][0] = 10;
-    matrix->rows[size-1][size-1] = 10;
+    matrix->rows[0][0] = 0;
+    matrix->rows[0][size-1] = 0;
+    matrix->rows[size/2][size/2] = 30;
+    matrix->rows[size-1][0] = 0;
+    matrix->rows[size-1][size-1] = 0;
     return matrix;
 }
 
-Matrix* make_mountain(int sizeM){
-    //commented this out because it was causing an unknown segmentation fault
-	//srand(time(2005));
-    
+Matrix* fix_matrix(Matrix *matrix){
+    int size = matrix->num_cols;
+    for(int row=0; row<size; row++){
+        for (int col = 0; col<size; col++){
+            int curr_val = matrix->rows[row][col];
+            double smooth = indiv_smoothing(matrix, row, col);
+            if (abs(curr_val-smooth) > 1) {
+                matrix->rows[row][col] = smooth;
+            }
+        }
+    }
+}
+
+Matrix* make_mountain(int sizeM, int steps){
+	//srand(time(NULL));
+
 	Matrix *matrix = init_matrix(sizeM);
     int size = matrix->num_cols-1;
-    int ds_steps = 4;
+    int ds_steps = steps;
     int num_quad = 1;
-    double roughness = 30;
+    double roughness = 5;
     int grid_split = 1;
 
     int max_index = size;//(int) pow(2.0, ds_steps);
 
     int sideLength = size;
     for (int step = 0; step < ds_steps; step++){
-    	int loRough = roughness/(step +1.0);
+        int loRough = roughness/(step +1.0);
 
-    	square_step(matrix, grid_split, sideLength, loRough);
+        square_step(matrix, grid_split, sideLength, loRough);
+        //int size = matrix->num_cols;
+        matrix->rows[size/2][size/2] = 30;
+        diamond_step(matrix, grid_split, sideLength, loRough, max_index);
 
-    	diamond_step(matrix, grid_split, sideLength, loRough, max_index);
-
-    	sideLength /= 2;
-    	grid_split *= 2;
-
+        sideLength /= 2;
+        grid_split *= 2;
+        printf("Done with step: %d\n", step);
     }
+    /*num_quad = 1;
+    roughness = 5;
+    grid_split = 1;
+
+    max_index = size;
+    sideLength = size;*/
+    for (int step = 0; step < ds_steps; step++){
+        int loRough = roughness/(step +1.0);
+
+        square_step(matrix, grid_split, sideLength, loRough);
+        diamond_step(matrix, grid_split, sideLength, loRough, max_index);
+
+        sideLength /= 2;
+        grid_split *= 2;
+        printf("Done with step: %d\n", step);
+    }
+    /*num_quad = 1;
+    roughness = 5;
+    grid_split = 1;
+
+    max_index = size;
+    sideLength = size;
+    for (int step = 0; step < ds_steps; step++){
+        int loRough = roughness/(step +1.0);
+
+        square_step(matrix, grid_split, sideLength, loRough);
+        diamond_step(matrix, grid_split, sideLength, loRough, max_index);
+
+        sideLength /= 2;
+        grid_split *= 2;
+        printf("Done with step: %d\n", step);
+    }*/
+    smoothing(matrix);
+    fix_matrix(matrix);
     return matrix;
 }
 
+
 // int main () {
-// 	Matrix *matrix = make_mountain(17);
+// 	Matrix *matrix = make_mountain(77);
+//
 //     print_matrix(matrix);
-    
+//     printf("Size of matrix: %d\n", matrix->num_rows);
 //     free_matrix(matrix);
 // }
+
+/*
+To make mountain:
+size = 17 - ds_steps = 4
+size = 37 - ds_steps = 6
+size = 41 - ds_steps = 6
+size = 49 - ds_steps = 6;
+size = 57 - ds_steps = 6;
+size = 69 - ds_steps = 7;
+
+With double pass:
+size = 5 - ds_steps = 1;
+size = 17 - ds_steps = 2;
+size = 37 - ds_steps = 3;
+*/
