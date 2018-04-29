@@ -1,3 +1,6 @@
+'''Modified from https://github.com/anoved/libtrix for use with our
+ mountain heightmaps.'''
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -289,6 +292,5 @@ int HeightmapToSTL(Matrix *hm) {
 
 int main(){
   Matrix *hm = make_mountain(17,2);
-  print_matrix(hm);
   HeightmapToSTL(hm);
 }

@@ -1,3 +1,5 @@
+'''Taken from https://github.com/anoved/libtrix'''
+
 #ifndef _LIBTRIX_H_
 #define _LIBTRIX_H_
 

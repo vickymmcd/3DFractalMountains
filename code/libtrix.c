@@ -1,3 +1,5 @@
+'''Taken from https://github.com/anoved/libtrix'''
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
