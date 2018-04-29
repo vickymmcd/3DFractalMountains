@@ -1,4 +1,4 @@
-'''Taken from https://github.com/anoved/libtrix'''
+/*Taken from https://github.com/anoved/libtrix*/
 
 #include <string.h>
 #include <stdlib.h>
