@@ -86,7 +86,7 @@ int terrainLoadFromHeightmap(int size) {
 
 	//define heightmap
 
-	heightmap = make_mountain(size);
+	heightmap = make_mountain(size,3);
 
 //	print_matrix(heightmap);
 
