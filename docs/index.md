@@ -49,3 +49,6 @@ To visualize our mountain in OpenGL we used...
 As a result of this, we can visualize our landscapes using STL files. Below are some examples:
 
 
+## Reflection
+
+We achieved our MVP as well as a stretch goal. We were able to generate a mountain using a fractal algorithm, visualize it in OpenGL, and add key and mouse input. We were able to accomplish our stretch goal of generating a STL file and 3D printing some of these landscapes. We did not implement our other stretch goal of having a change in lighting to simulate the sun setting. Overall, we all go the opportunity to work on our learning goals (which were to learn C++, investigate fractal algorithms for the purpose of generating landscapes, and learn how to use OpenGL).
