@@ -187,7 +187,8 @@ Matrix* init_matrix(int size){
 }
 
 Matrix* make_mountain(int sizeM){
-	srand(time(NULL));
+    //commented this out because it was causing an unknown segmentation fault
+	//srand(time(2005));
     
 	Matrix *matrix = init_matrix(sizeM);
     int size = matrix->num_cols-1;

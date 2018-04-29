@@ -1,3 +1,6 @@
+#include <string>
+#include <iostream>
+
 #include <math.h>
 #include <GL/glut.h>
 #include <GL/gl.h>
@@ -7,6 +10,8 @@
 #include "tga.h"
 #include "terrain.h"
 #include "finaltry.h"
+
+using namespace std;
 
 static int terrainGridWidth ,terrainGridLength;
 static float *terrainHeights = NULL;
@@ -61,6 +66,8 @@ int terrainLoadFromImage(char *filename, int normals) {
 			pointHeight = info->heightMapData[mode*(i*terrainGridWidth + j)+(mode-1)] / 256.0;
 			terrainHeights[i*terrainGridWidth + j] = pointHeight;
 		}
+	for (int i = (terrainGridLength*terrainGridWidth) - 1; i >= 0; i--) 
+  	printf("%lf ", terrainHeights[i]);
 
 // free the image's memory 
 	tgaDestroy(info);
@@ -71,15 +78,17 @@ int terrainLoadFromImage(char *filename, int normals) {
 
 int terrainLoadFromHeightmap(int size) {
 
+
 	tgaInfo *info;
 	Matrix *heightmap;
 	int mode;
 	float pointHeight;
 
 	//define heightmap
+
 	heightmap = make_mountain(size);
-	printf("matrix");
-	print_matrix(heightmap);
+
+//	print_matrix(heightmap);
 
 // set the width and height of the terrain
 	terrainGridWidth = heightmap->num_cols;
@@ -100,12 +109,12 @@ int terrainLoadFromHeightmap(int size) {
 	for (int i = 0 ; i < terrainGridLength; i++)
 		for (int j = 0;j < terrainGridWidth; j++) {
 // compute the height as a value between 0.0 and 1.0
-			pointHeight = heightmap->rows[i][j]/500;    
-			terrainHeights[i*terrainGridWidth + j] = pointHeight;
+			pointHeight = (float)(heightmap->rows[i][j])/500.0;    
+			terrainHeights[i*terrainGridWidth + j] = (float)pointHeight;
 		}
 
 	for (int i = (terrainGridLength*terrainGridWidth) - 1; i >= 0; i--) 
-  	printf("%d ", terrainHeights[i]);
+  	printf("%lf ", terrainHeights[i]);
 // free the image's memory 
 	tgaDestroy(info);
 	

@@ -19,11 +19,11 @@
 
 
 // stuff for lighting
-GLfloat lAmbient[] = {0.3,0.3,0.3,1.0};
-GLfloat lDiffuse[] = {1.0,1.0,1.0,1.0};
+GLfloat lAmbient[] = {6.0,6.0,6.0,0.1};
+GLfloat lDiffuse[] = {0.1,0.1,0.1,0.1};
 GLfloat lSpecular[] = {1.0,1.0,1.0,1.0};
 
-GLfloat lPosition[] = {0.0,100.0,0.0,1.0};
+GLfloat lPosition[] = {0.0,10.0,0.0,1.0};
 
 // materials
 GLfloat mSpecular[] = {1.0,1.0,1.0,1.0};
@@ -33,8 +33,8 @@ GLfloat mShininess[] = {128.0};
 //colors
 GLfloat cBlack[] = {0.0,0.0,0.0,1.0};
 GLfloat cOrange[] = {1.0,0.5,0.5,1.0}; 
-GLfloat cWhite[] = {1.0,1.0,1.0,1.0}; 
-GLfloat cGrey[] = {0.1,0.1,0.1,1.0};
+GLfloat cWhite[] = {0.1,0.1,0.1,0.1}; 
+GLfloat cGrey[] = {0.05,0.05,0.05,1.0};
 GLfloat cLightGrey[] = {0.9,0.9,0.9,1.0};
 
 
@@ -50,7 +50,7 @@ float lx=0.0f,ly=0.0f,lz=-1.0f,deltaMove=0.0;
 int h,w;
 int font=*((int*)(GLUT_BITMAP_8_BY_13));
 static GLint snowman_display_list;
-int bitmapHeight=13;
+int bitmapHeight= 2; //13;
 int mode;
 float angle2,angle2Y,angleY;
 static int deltaX=-1000,deltaY;
@@ -105,7 +105,7 @@ void initScene() {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	terrainDL = terrainCreateDL(0,0,0);
-	y = terrainGetHeight(0,0) + 1.75;
+	y = terrainGetHeight(0,0) + .1; //1.75;
 	
 	glLightfv(GL_LIGHT0,GL_AMBIENT,lAmbient);
 	glLightfv(GL_LIGHT0,GL_DIFFUSE,lDiffuse);
@@ -166,15 +166,13 @@ void renderBitmapString(float x, float y, void *font,char *string)
   glRasterPos2f(x, y);
   // loop all the characters in the string
   for (c=string; *c != '\0'; c++) {
-    glutBitmapCharacter(font, *c);
+   // glutBitmapCharacter(font, *c);
+	 	continue;
   }
 }
 
 
 void renderScene(void) {
-
-
-
 	if (deltaMove)
 		moveMeFlat(deltaMove);
 	if (deltaAngle) {
@@ -205,19 +203,10 @@ void renderScene(void) {
 		frame = 0;
 	}
 	glDisable(GL_LIGHTING);
-	glColor3f(0.0f,1.0f,1.0f);
+//	glColor3f(0.0f,1.0f,1.0f);
 	setOrthographicProjection();
 	glPushMatrix();
 	glLoadIdentity();
-	renderBitmapString(30,15,(void *)font,"Terrain Tutorial @ 3D Tech"); 
-	renderBitmapString(30,30,(void *)font,s); 
-	renderBitmapString(30,45,(void *)font,"F1  - Game Mode  640x480 32 bits");
-	renderBitmapString(30,60,(void *)font,"F2  - Game Mode  800x600 32 bits");
-	renderBitmapString(30,75,(void *)font,"F3  - Game Mode 1024x768 32 bits");
-	renderBitmapString(30,90,(void *)font,"F4  - Window Mode");
-	renderBitmapString(30,105,(void *)font,"F12 - Grab Screen");
-	renderBitmapString(30,120,(void *)font,"Esc - Quit");
-	renderBitmapString(30,135,(void *)font,currentMode);
 	glPopMatrix();
 	resetPerspectiveProjection();
 	glEnable(GL_LIGHTING);
@@ -389,18 +378,18 @@ int main(int argc, char **argv)
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100,100);
 	glutInitWindowSize(640,360);
-	glutCreateWindow("SnowMen from 3D-Tech");
+	glutCreateWindow("3D Fractal Mountains");
 
-	//init terrain structures
+//	init terrain structure
 	// if (terrainLoadFromImage("3dtech.tga",1) != TERRAIN_OK) {
 	// 	printf("error loading heightmap\n");
 	// 	return(-1);
 	// }
-	if (terrainLoadFromHeightmap(5) != TERRAIN_OK) {
+	if (terrainLoadFromHeightmap(17) != TERRAIN_OK) {
 		printf("error loading heightmap\n");
 		return(-1);
 	}
-	terrainScale(0,40);
+	terrainScale(0,1);
 	// register all callbacks and
 	// create display lists
 	init();

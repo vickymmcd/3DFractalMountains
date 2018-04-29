@@ -211,7 +211,7 @@ int terrainLoadFromImage(char *filename, int normals) {
 // compute the height as a value between 0.0 and 1.0
 			pointHeight = info->imageData[mode*(i*terrainGridWidth + j)+(mode-1)] / 256.0;
 			terrainHeights[i*terrainGridWidth + j] = pointHeight;
-// if mode = RGBA then fill the colors array as well
+// if mode = RGBA then fill the colors omarray as well
 			if (mode==4) {
 				terrainColors[3*(i*terrainGridWidth + j)]   = info->imageData[mode*(i*terrainGridWidth + j)] / 256.0;
 				terrainColors[3*(i*terrainGridWidth + j)+1] = info->imageData[mode*(i*terrainGridWidth + j)+1]/256.0;
@@ -221,6 +221,9 @@ int terrainLoadFromImage(char *filename, int normals) {
 // if we want normals then compute them		
 	if (normals)
 		terrainComputeNormals();
+
+	for (int i = (terrainGridLength*terrainGridWidth) - 1; i >= 0; i--) 
+  	printf("%lf ", terrainHeights[i]);
 // free the image's memory 
 	tgaDestroy(info);
 	
