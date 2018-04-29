@@ -22,7 +22,7 @@ Settings CONFIG = {
 	1,    // generate base (walls and bottom)
 	0,    // binary output
 	NULL, // read from stdin
-	"ourhm.stl", // write to ourhm.stl
+	"mountain.stl", // write to ourhm.stl
 	NULL, // no mask
 	127,  // middle of 8 bit range
 	0,    // normal un-reversed mask
@@ -288,7 +288,7 @@ int HeightmapToSTL(Matrix *hm) {
 }
 
 int main(){
-  Matrix *hm = make_mountain(17,4);
+  Matrix *hm = make_mountain(17,2);
   print_matrix(hm);
   HeightmapToSTL(hm);
 }
