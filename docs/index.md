@@ -23,13 +23,13 @@ for (int step = 0; step < ds_steps; step++){
 	// sharper the deeper into the matrix we go
 	int loRough = roughness/(step +1.0);
 
-	//Exectues the square step
+	//Executes the square step
 	square_step(matrix, grid_split, sideLength, loRough);
 	
 	//make sure the heigh of the peak is maintained
 	matrix->rows[size/2][size/2] = 30;
 
-	//execute the diamond step
+	//Executes the diamond step
 	diamond_step(matrix, grid_split, sideLength, loRough, max_index);
 
 	//change the increments for the next level
@@ -39,4 +39,13 @@ for (int step = 0; step < ds_steps; step++){
 ```
 
 The diamond square algorithm isn't a perfect terrain generating algorithm, but a recommended action is to run the algorithm twice, which we did, to achieve a more natural looking effect.
+
+## Visualizing in OpenGL
+
+To visualize our mountain in OpenGL we used...
+
+## 3D Printing
+
+As a result of this, we can visualize our landscapes using STL files. Below are some examples:
+
 
