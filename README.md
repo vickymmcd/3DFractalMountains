@@ -13,5 +13,7 @@ Have a STL file viewer also installed.
 
 ### Generate STL File of Landscape
 `make stl_from_hm`
+The STL file you generated will be titled "mountain.stl"
+Open this file in an STL viewer such as MeshLab to see the terrain you generated.
 
 ### Visualize Landscape in OpenGL
