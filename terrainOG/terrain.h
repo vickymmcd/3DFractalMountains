@@ -5,6 +5,7 @@
 #define TERRAIN_OK						 0
 
 int terrainLoadFromImage(char *filename, int normals);
+int terrainLoadFromHeightmap(int size, int normals);
 int terrainCreateDL(float xOffset, float yOffset, float zOffset);
 void terrainDestroy();
 int terrainScale(float min,float max);

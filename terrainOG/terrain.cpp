@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "tga.h"
 #include "terrain.h"
+#include "finaltry.h"
 
 
 
@@ -152,35 +153,27 @@ void terrainComputeNormals() {
 
 }
 
-
-int terrainLoadFromImage(char *filename, int normals) {
+int terrainLoadFromHeightmap(int size, int normals) {
 
 	tgaInfo *info;
+	Matrix *heightmap;
 	int mode;
 	float pointHeight;
-
+	
 // if a terrain already exists, destroy it.
 	if (terrainHeights != NULL)
 		terrainDestroy();
-		
-// load the image, using the tgalib
-	info = tgaLoad(filename);
-// check to see if the image was properly loaded
-// remember: only greyscale, RGB or RGBA noncompressed images
-	if (info->status != TGA_OK)
-		return(TERRAIN_ERROR_LOADING_IMAGE);
 
-// if the image is RGB, convert it to greyscale
-// mode will store the image's number of components
-	mode = info->pixelDepth / 8;
-	if (mode == 3) {
-		tgaRGBtoGreyscale(info);
-		mode = 1;
-	}
-	
+	//define heightmap
+	heightmap = make_mountain(size,3);
+
+	//set heightmap to grayscale
+	mode = 1;
+
 // set the width and height of the terrain
-	terrainGridWidth = info->width;
-	terrainGridLength = info->height;
+	terrainGridWidth = heightmap->num_cols;
+	terrainGridLength = heightmap->num_rows;
+
 
 // alocate memory for the terrain, and check for errors
 	terrainHeights = (float *)malloc(terrainGridWidth * terrainGridLength * sizeof(float));
@@ -189,80 +182,31 @@ int terrainLoadFromImage(char *filename, int normals) {
 
 // allocate memory for the normals, and check for errors
 	if (normals) {
-		terrainNormals = (float *)malloc(terrainGridWidth * terrainGridLength * sizeof(float) * 3);
+		terrainNormals = (float *)malloc(terrainGridWidth * 
+						terrainGridLength * 
+						sizeof(float) * 3);
 		if (terrainNormals == NULL)
 			return(TERRAIN_ERROR_MEMORY_PROBLEM);
 	}
 	else
 			terrainNormals = NULL;
 
-// if mode = RGBA then allocate memory for colors, and check for errors
-	if (mode == 4) {
-		terrainColors = (float *)malloc(terrainGridWidth * terrainGridLength * sizeof(float)*3);
-		if (terrainColors == NULL)
-			return(TERRAIN_ERROR_MEMORY_PROBLEM);
-	}
-	else
-		terrainColors = NULL;
-
 // fill arrays
 	for (int i = 0 ; i < terrainGridLength; i++)
 		for (int j = 0;j < terrainGridWidth; j++) {
 // compute the height as a value between 0.0 and 1.0
-			pointHeight = info->imageData[mode*(i*terrainGridWidth + j)+(mode-1)] / 256.0;
-			terrainHeights[i*terrainGridWidth + j] = pointHeight;
-// if mode = RGBA then fill the colors omarray as well
-			if (mode==4) {
-				terrainColors[3*(i*terrainGridWidth + j)]   = info->imageData[mode*(i*terrainGridWidth + j)] / 256.0;
-				terrainColors[3*(i*terrainGridWidth + j)+1] = info->imageData[mode*(i*terrainGridWidth + j)+1]/256.0;
-				terrainColors[3*(i*terrainGridWidth + j)+2] = info->imageData[mode*(i*terrainGridWidth + j)+2]/256.0;
-			}
+			pointHeight = (float)(heightmap->rows[i][j]);  
+			terrainHeights[i*terrainGridWidth + j] = (float)pointHeight;
 		}
-// if we want normals then compute them		
-	if (normals)
-		terrainComputeNormals();
 
 	for (int i = (terrainGridLength*terrainGridWidth) - 1; i >= 0; i--) 
   	printf("%lf ", terrainHeights[i]);
 // free the image's memory 
+	if (normals)
+		terrainComputeNormals();
 	tgaDestroy(info);
 	
 	return(TERRAIN_OK); 
-}
-
-int terrainScale(float min,float max) {
-
-	float amp,aux,min1,max1,height;
-	int total,i;
-
-	if (terrainHeights == NULL)
-		return(TERRAIN_ERROR_NOT_INITIALISED);
-
-	if (min > max) {
-		aux = min;
-		min = max;
-		max = aux;
-	}
-
-	amp = max - min;
-	total = terrainGridWidth * terrainGridLength;
-
-	min1 = terrainHeights[0];
-	max1 = terrainHeights[0];
-	for(i=1;i < total ; i++) {
-		if (terrainHeights[i] > max1)
-			max1 = terrainHeights[i];
-		if (terrainHeights[i] < min1)
-			min1 = terrainHeights[i];
-	}
-	for(i=0;i < total; i++) {
-		height = (terrainHeights[i] - min1) / (max1-min1);
-		terrainHeights[i] = height * amp - min;
-	}
-printf("bla %f %f %f %f %f %f\n",min,max,min1,max1,amp,height);
-	if (terrainNormals != NULL)
-		terrainComputeNormals();
-	return(TERRAIN_OK);
 }
 	
 

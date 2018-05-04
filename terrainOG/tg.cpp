@@ -209,15 +209,15 @@ void renderScene(void) {
 	setOrthographicProjection();
 	glPushMatrix();
 	glLoadIdentity();
-	renderBitmapString(30,15,(void *)font,"Terrain Tutorial @ 3D Tech"); 
-	renderBitmapString(30,30,(void *)font,s); 
-	renderBitmapString(30,45,(void *)font,"F1  - Game Mode  640x480 32 bits");
-	renderBitmapString(30,60,(void *)font,"F2  - Game Mode  800x600 32 bits");
-	renderBitmapString(30,75,(void *)font,"F3  - Game Mode 1024x768 32 bits");
-	renderBitmapString(30,90,(void *)font,"F4  - Window Mode");
-	renderBitmapString(30,105,(void *)font,"F12 - Grab Screen");
-	renderBitmapString(30,120,(void *)font,"Esc - Quit");
-	renderBitmapString(30,135,(void *)font,currentMode);
+	// renderBitmapString(30,15,(void *)font,"Terrain Tutorial @ 3D Tech"); 
+	// renderBitmapString(30,30,(void *)font,s); 
+	// renderBitmapString(30,45,(void *)font,"F1  - Game Mode  640x480 32 bits");
+	// renderBitmapString(30,60,(void *)font,"F2  - Game Mode  800x600 32 bits");
+	// renderBitmapString(30,75,(void *)font,"F3  - Game Mode 1024x768 32 bits");
+	// renderBitmapString(30,90,(void *)font,"F4  - Window Mode");
+	// renderBitmapString(30,105,(void *)font,"F12 - Grab Screen");
+	// renderBitmapString(30,120,(void *)font,"Esc - Quit");
+	// renderBitmapString(30,135,(void *)font,currentMode);
 	glPopMatrix();
 	resetPerspectiveProjection();
 	glEnable(GL_LIGHTING);
@@ -369,9 +369,6 @@ void mousePress(int button, int state, int x, int y) {
 }
 
 
-
-
-
 void init() {
 	glutIgnoreKeyRepeat(1);
 	glutKeyboardFunc(processNormalKeys);
@@ -394,10 +391,11 @@ int main(int argc, char **argv)
 	glutInitWindowSize(640,360);
 	glutCreateWindow("SnowMen from 3D-Tech");
 
-	// init terrain structures
-	if (terrainLoadFromImage("3dtech.tga",1) != TERRAIN_OK)
+	if (terrainLoadFromHeightmap(69,1) != TERRAIN_OK)
 		return(-1);
-	terrainScale(0,40);
+
+//	terrainScale(0,40);
+
 	// register all callbacks and
 	// create display lists
 	init();

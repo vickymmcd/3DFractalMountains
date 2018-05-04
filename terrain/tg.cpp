@@ -17,6 +17,15 @@
 #include "tga.h"
 #include "terrain.h"
 
+GLfloat no_mat[] = {0.0f, 0.0f, 0.0f, 1.0f};
+GLfloat mat_ambient[] = {0.7f, 0.7f, 0.7f, 1.0f};
+GLfloat mat_ambient_color[] = {0.8f, 0.8f, 0.2f, 1.0f};
+GLfloat mat_diffuse[] = {0.1f, 0.5f, 0.8f, 1.0f};
+GLfloat mat_specular[] = {1.0f, 1.0f, 1.0f, 1.0f};
+GLfloat no_shininess = 0.0f;
+GLfloat low_shininess = 5.0f;
+GLfloat high_shininess = 100.0f;
+GLfloat mat_emission[] = {0.3f, 0.2f, 0.2f, 0.0f};
 
 // stuff for lighting
 GLfloat lAmbient[] = {6.0,6.0,6.0,0.1};
@@ -30,12 +39,12 @@ GLfloat mSpecular[] = {1.0,1.0,1.0,1.0};
 // the smaller the larger the specular area is
 GLfloat mShininess[] = {128.0};
 
-//colors
-GLfloat cBlack[] = {0.0,0.0,0.0,1.0};
-GLfloat cOrange[] = {1.0,0.5,0.5,1.0}; 
-GLfloat cWhite[] = {0.1,0.1,0.1,0.1}; 
-GLfloat cGrey[] = {0.05,0.05,0.05,1.0};
-GLfloat cLightGrey[] = {0.9,0.9,0.9,1.0};
+// //colors
+// GLfloat cBlack[] = {0.0,0.0,0.0,1.0};
+// GLfloat cOrange[] = {1.0,0.5,0.5,1.0}; 
+// GLfloat cWhite[] = {0.1,0.1,0.1,1.0}; 
+// GLfloat cGrey[] = {2.0, 2.0, 2.0, 1.0};
+// GLfloat cLightGrey[] = {0.2,0.2,0.2,1.0};
 
 
 
@@ -50,7 +59,7 @@ float lx=0.0f,ly=0.0f,lz=-1.0f,deltaMove=0.0;
 int h,w;
 int font=*((int*)(GLUT_BITMAP_8_BY_13));
 static GLint snowman_display_list;
-int bitmapHeight= 2; //13;
+int bitmapHeight= 13; //13;
 int mode;
 float angle2,angle2Y,angleY;
 static int deltaX=-1000,deltaY;
@@ -105,7 +114,7 @@ void initScene() {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	terrainDL = terrainCreateDL(0,0,0);
-	y = terrainGetHeight(0,0) + .1; //1.75;
+	y = terrainGetHeight(0,0) + 1.75; //1.75;
 	
 	glLightfv(GL_LIGHT0,GL_AMBIENT,lAmbient);
 	glLightfv(GL_LIGHT0,GL_DIFFUSE,lDiffuse);
@@ -189,12 +198,20 @@ void renderScene(void) {
 
 // Draw ground
 
-	glMaterialfv(GL_FRONT, GL_SPECULAR, mSpecular);
-	glMaterialfv(GL_FRONT, GL_SHININESS,mShininess);
-	glMaterialfv(GL_FRONT, GL_AMBIENT, cGrey);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, cWhite);
-	glCallList(terrainDL);
+	// glMaterialfv(GL_FRONT, GL_SPECULAR, mSpecular);
+	// glMaterialfv(GL_FRONT, GL_SHININESS,mShininess);
+	// glMaterialfv(GL_FRONT, GL_AMBIENT, cGrey);
+	// glMaterialfv(GL_FRONT, GL_DIFFUSE, cWhite);
+	// glCallList(terrainDL);
 
+	glTranslatef(-1.25f, 0.0f, 0.0f);
+  glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+  glMaterialf(GL_FRONT, GL_SHININESS, low_shininess);
+  glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
+	glCallList(terrainDL);
+	
 	frame++;
 	time=glutGet(GLUT_ELAPSED_TIME);
 	if (time - timebase > 1000) {
@@ -202,8 +219,8 @@ void renderScene(void) {
 		timebase = time;		
 		frame = 0;
 	}
-	glDisable(GL_LIGHTING);
-//	glColor3f(0.0f,1.0f,1.0f);
+//	glDisable(GL_LIGHTING);
+	glColor3f(0.0f,3.0f,0.0f);
 	setOrthographicProjection();
 	glPushMatrix();
 	glLoadIdentity();
@@ -376,8 +393,8 @@ int main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-	glutInitWindowPosition(100,100);
-	glutInitWindowSize(640,360);
+//	glutInitWindowPosition(100,100);
+	//glutInitWindowSize(640,360);
 	glutCreateWindow("3D Fractal Mountains");
 
 //	init terrain structure
@@ -385,11 +402,10 @@ int main(int argc, char **argv)
 	// 	printf("error loading heightmap\n");
 	// 	return(-1);
 	// }
-	if (terrainLoadFromHeightmap(37) != TERRAIN_OK) {
+	if (terrainLoadFromHeightmap(69) != TERRAIN_OK) {
 		printf("error loading heightmap\n");
 		return(-1);
 	}
-	terrainScale(0,1);
 	// register all callbacks and
 	// create display lists
 	init();
