@@ -1,5 +1,5 @@
 title: 3d Fractal Mountains
-description: A C++ project that generates landscapes and visualizes it with OpenGL and 3d Printing
+description: Created by Emily Lepert, Vicky McDermott, and Willem Thorbecke. A C++ project that generates landscapes and visualizes it with OpenGL and 3d Printing
 show_downloads: true
 google_analytics:
 theme: jekyll-theme-cayman
