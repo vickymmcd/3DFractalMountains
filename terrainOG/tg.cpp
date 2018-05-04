@@ -1,14 +1,8 @@
-
 #include <math.h>
 
-#define GL_GLEXT_PROTOTYPES
-#ifdef __APPLE__
-#include <GLUT/glut.h>
-#else
 #include <GL/glut.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#endif
 
 #include <stdio.h>
 #include <string.h>
@@ -38,8 +32,6 @@ GLfloat cGrey[] = {0.1,0.1,0.1,1.0};
 GLfloat cLightGrey[] = {0.9,0.9,0.9,1.0};
 
 
-
-
 #define FLY		1
 #define WALK	2
 
@@ -49,9 +41,6 @@ float x=0.0f,y=1.75f,z=5.0f;
 float lx=0.0f,ly=0.0f,lz=-1.0f,deltaMove=0.0;
 int h,w;
 int font=*((int*)(GLUT_BITMAP_8_BY_13));
-static GLint snowman_display_list;
-int bitmapHeight=13;
-int mode;
 float angle2,angle2Y,angleY;
 static int deltaX=-1000,deltaY;
 
@@ -61,13 +50,6 @@ char s[60];
 int frame,time,timebase=0;
 char currentMode[80];
 
-// this string keeps the last good setting 
-// for the game mode
-char gameModeString[40] = "640x480";
-
-
-
-void init();
 
 void changeSize(int w1, int h1)
 	{
@@ -173,24 +155,19 @@ void renderBitmapString(float x, float y, void *font,char *string)
 
 void renderScene(void) {
 
+	if (deltaMove) moveMeFlat(deltaMove);
 
-
-	if (deltaMove)
-		moveMeFlat(deltaMove);
 	if (deltaAngle) {
 		angle += deltaAngle;
 		orientMe(angle);
 	}
-	glLoadIdentity();
-	gluLookAt(x, y, z, 
-		      x + 10*lx,y + 10*ly,z + 10*lz,
-			  0.0f,1.0f,0.0f);
 
+	glLoadIdentity();
+	gluLookAt(x, y, z, x + 10*lx,y + 10*ly,z + 10*lz, 0.0f,1.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLightfv(GL_LIGHT0,GL_POSITION,lPosition);
 
-// Draw ground
-
+//Draw ground
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mSpecular);
 	glMaterialfv(GL_FRONT, GL_SHININESS,mShininess);
 	glMaterialfv(GL_FRONT, GL_AMBIENT, cGrey);
@@ -198,38 +175,15 @@ void renderScene(void) {
 	glCallList(terrainDL);
 
 	frame++;
-	time=glutGet(GLUT_ELAPSED_TIME);
-	if (time - timebase > 1000) {
-		sprintf(s,"FPS:%4.2f",frame*1000.0/(time-timebase));
-		timebase = time;		
-		frame = 0;
-	}
-	glDisable(GL_LIGHTING);
+
 	glColor3f(0.0f,1.0f,1.0f);
 	setOrthographicProjection();
 	glPushMatrix();
 	glLoadIdentity();
-	// renderBitmapString(30,15,(void *)font,"Terrain Tutorial @ 3D Tech"); 
-	// renderBitmapString(30,30,(void *)font,s); 
-	// renderBitmapString(30,45,(void *)font,"F1  - Game Mode  640x480 32 bits");
-	// renderBitmapString(30,60,(void *)font,"F2  - Game Mode  800x600 32 bits");
-	// renderBitmapString(30,75,(void *)font,"F3  - Game Mode 1024x768 32 bits");
-	// renderBitmapString(30,90,(void *)font,"F4  - Window Mode");
-	// renderBitmapString(30,105,(void *)font,"F12 - Grab Screen");
-	// renderBitmapString(30,120,(void *)font,"Esc - Quit");
-	// renderBitmapString(30,135,(void *)font,currentMode);
 	glPopMatrix();
 	resetPerspectiveProjection();
 	glEnable(GL_LIGHTING);
 	glutSwapBuffers();
-}
-
-void processNormalKeys(unsigned char key, int x, int y) {
-
-	if (key == 27) {
-		terrainDestroy();
-		exit(0);
-	}
 }
 
 void pressKey(int key, int x, int y) {
@@ -249,74 +203,7 @@ void pressKey(int key, int x, int y) {
 			else
 				deltaMove = -0.1;
 			break;
-		case GLUT_KEY_F1:  
-			
-			// define resolution, color depth
-			glutGameModeString("640x480:32");
-			// enter full screen
-			if (glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)) {
-				glutEnterGameMode();
-				sprintf(gameModeString,"640x480:32");
-				w = 640;
-				h = 480;
-				// register callbacks again 
-				// and init OpenGL context
-				init();
-			}
-			else
-				glutGameModeString(gameModeString);
-			break;
-		case GLUT_KEY_F2:     
-			// define resolution, color depth
-			glutGameModeString("800x600:32");
-			// enter full screen
-			if (glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)) {
-				glutEnterGameMode();
-				sprintf(gameModeString,"800x600:32");
-				w = 800;
-				h = 600;
-				// register callbacks again 
-				// and init OpenGL context
-				init();
-			}
-			else
-				glutGameModeString(gameModeString);
-			break;
-		case GLUT_KEY_F3:  
-			// define resolution, color depth
-			glutGameModeString("1024x768:32");
-			// enter full screen
-			if (glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)) {
-				glutEnterGameMode();
-				w = 1024;
-				h = 768;
-				sprintf(gameModeString,"1024x768:32");
-				// register callbacks again 
-				// and init OpenGL context
-				init();
-			}
-			else
-				glutGameModeString(gameModeString);
-			break;
-		case GLUT_KEY_F4:  
-			// return to default window
-			w = 640;h = 360;
-			if (glutGameModeGet(GLUT_GAME_MODE_ACTIVE) != 0)
-				glutLeaveGameMode();
-			break;
-		case GLUT_KEY_F12:
-			tgaGrabScreenSeries("3dtechscreen",0,0,w,h);
-			break;
 	}
-	if (glutGameModeGet(GLUT_GAME_MODE_ACTIVE) == 0)
-		sprintf(currentMode,"Current Mode: Window");
-	else
-		sprintf(currentMode,
-			"Current Mode: Game Mode %dx%d at %d hertz, %d bpp",
-			glutGameModeGet(GLUT_GAME_MODE_WIDTH),
-			glutGameModeGet(GLUT_GAME_MODE_HEIGHT),
-			glutGameModeGet(GLUT_GAME_MODE_REFRESH_RATE),
-			glutGameModeGet(GLUT_GAME_MODE_PIXEL_DEPTH));
 }
 
 void releaseKey(int key, int x, int y) {
@@ -351,14 +238,11 @@ void activeMouseMotion(int x, int y) {
 		ly = -sin(angle2Y);
 }
 
-
 void mousePress(int button, int state, int x, int y) {
 
 	if (state == GLUT_DOWN) {
-//		angle2 = 0;
 		deltaX = x;
 		deltaY = y;
-//		angle2Y = 0;
 		navigationMode = FLY;
 	} 
 	else if (state == GLUT_UP) {
@@ -368,10 +252,14 @@ void mousePress(int button, int state, int x, int y) {
 	}
 }
 
+void init(int argc, char **argv) {
 
-void init() {
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+	glutInitWindowPosition(100,100);
+	glutInitWindowSize(640,360);
+	glutCreateWindow("3D Fractal Mountains");
 	glutIgnoreKeyRepeat(1);
-	glutKeyboardFunc(processNormalKeys);
 	glutSpecialFunc(pressKey);
 	glutSpecialUpFunc(releaseKey);
 	glutMotionFunc(activeMouseMotion);
@@ -380,26 +268,13 @@ void init() {
 	glutIdleFunc(renderScene);
 	glutReshapeFunc(changeSize);
 	initScene();
-
 }
 
-int main(int argc, char **argv)
-{
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-	glutInitWindowPosition(100,100);
-	glutInitWindowSize(640,360);
-	glutCreateWindow("SnowMen from 3D-Tech");
+int main(int argc, char **argv) {
 
-	if (terrainLoadFromHeightmap(69,1) != TERRAIN_OK)
-		return(-1);
+	if (terrainLoadFromHeightmap(69,1,0.5) != TERRAIN_OK) return(-1);
 
-//	terrainScale(0,40);
-
-	// register all callbacks and
-	// create display lists
-	init();
-
+	init(argc,argv);
 	glutMainLoop();
 
 	return(0);

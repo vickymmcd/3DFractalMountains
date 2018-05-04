@@ -153,7 +153,7 @@ void terrainComputeNormals() {
 
 }
 
-int terrainLoadFromHeightmap(int size, int normals) {
+int terrainLoadFromHeightmap(int size, int normals, float scale) {
 
 	tgaInfo *info;
 	Matrix *heightmap;
@@ -165,7 +165,7 @@ int terrainLoadFromHeightmap(int size, int normals) {
 		terrainDestroy();
 
 	//define heightmap
-	heightmap = make_mountain(size,3);
+	heightmap = make_mountain(size,5);
 
 	//set heightmap to grayscale
 	mode = 1;
@@ -191,19 +191,19 @@ int terrainLoadFromHeightmap(int size, int normals) {
 	else
 			terrainNormals = NULL;
 
-// fill arrays
+// fill heightmap array
 	for (int i = 0 ; i < terrainGridLength; i++)
 		for (int j = 0;j < terrainGridWidth; j++) {
-// compute the height as a value between 0.0 and 1.0
 			pointHeight = (float)(heightmap->rows[i][j]);  
-			terrainHeights[i*terrainGridWidth + j] = (float)pointHeight;
+			terrainHeights[i*terrainGridWidth + j] = (float)pointHeight*scale;
 		}
 
 	for (int i = (terrainGridLength*terrainGridWidth) - 1; i >= 0; i--) 
   	printf("%lf ", terrainHeights[i]);
-// free the image's memory 
+
 	if (normals)
 		terrainComputeNormals();
+
 	tgaDestroy(info);
 	
 	return(TERRAIN_OK); 
