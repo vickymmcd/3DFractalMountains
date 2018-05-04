@@ -1,5 +1,7 @@
 # 3D Fractal Mountain Generator
 
+[Read about our project.](https://vickymmcd.github.io/3DFractalMountains/)
+
 ### Setup
 Install C++ and OpenGL.
 
