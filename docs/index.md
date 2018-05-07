@@ -46,7 +46,7 @@ To visualize our mountain in OpenGL we used GLUT (OpenGL Utility Toolkit) as wel
 
 The final result of our OpenGL rendering looked as follows: 
 
-![](https://raw.githubusercontent.com/vickymmcd/3DFractalMountains/master/docs/images/mountain_range.png)
+![](https://raw.githubusercontent.com/vickymmcd/3DFractalMountains/master/docs/images/mountain_range2.png)
 
 ## 3D Printing
 
