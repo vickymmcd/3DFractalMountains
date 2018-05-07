@@ -21,3 +21,9 @@ The STL file you generated will be titled "mountain.stl"
 Open this file in an STL viewer such as MeshLab to see the terrain you generated.
 
 ### Visualize Landscape in OpenGL
+`cd 3DFractalMountains/terrain`
+`make`
+`./tg`
+
+The render can be controlled with mouse and arrow key input.
+
