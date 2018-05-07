@@ -10,7 +10,7 @@ typedef struct {
 	int status;
 	unsigned char type, pixelDepth;
 	short int width, height;
-	unsigned char *heightMapData;
+	unsigned char *imageData;
 }tgaInfo;
 
 tgaInfo* tgaLoad(char *filename);

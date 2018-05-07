@@ -1,6 +1,3 @@
-#include <string>
-#include <iostream>
-
 #include <math.h>
 #include <GL/glut.h>
 #include <GL/gl.h>
@@ -11,12 +8,13 @@
 #include "terrain.h"
 #include "finaltry.h"
 
-using namespace std;
+
 
 static int terrainGridWidth ,terrainGridLength;
 static float *terrainHeights = NULL;
 static float *terrainColors = NULL;
 static float *terrainNormals = NULL;
+
 
 float *terrainCrossProduct(int x1,int z1,int x2,int z2,int x3,int z3) {
 
@@ -155,28 +153,33 @@ void terrainComputeNormals() {
 
 }
 
-int terrainLoadFromHeightmap(int size) {
+int terrainLoadFromHeightmap(int size, int normals, float scale) {
 
-	int normals = 1;
 	tgaInfo *info;
 	Matrix *heightmap;
 	int mode;
 	float pointHeight;
+	
+// if a terrain already exists, destroy it.
+	if (terrainHeights != NULL)
+		terrainDestroy();
 
 	//define heightmap
+	heightmap = make_mountain(size,5);
 
-	heightmap = make_mountain(size,3);
-
-//	print_matrix(heightmap);
+	//set heightmap to grayscale
+	mode = 1;
 
 // set the width and height of the terrain
 	terrainGridWidth = heightmap->num_cols;
 	terrainGridLength = heightmap->num_rows;
 
+
 // alocate memory for the terrain, and check for errors
 	terrainHeights = (float *)malloc(terrainGridWidth * terrainGridLength * sizeof(float));
 	if (terrainHeights == NULL)
 		return(TERRAIN_ERROR_MEMORY_PROBLEM);
+
 // allocate memory for the normals, and check for errors
 	if (normals) {
 		terrainNormals = (float *)malloc(terrainGridWidth * 
@@ -187,81 +190,68 @@ int terrainLoadFromHeightmap(int size) {
 	}
 	else
 			terrainNormals = NULL;
-//don't know what normals are so none of that...
-	terrainNormals = NULL;
 
-//only grayscale images allowed for now
-	terrainColors = NULL;
-
-// fill arrays
+// fill heightmap array
 	for (int i = 0 ; i < terrainGridLength; i++)
 		for (int j = 0;j < terrainGridWidth; j++) {
-// compute the height as a value between 0.0 and 1.0
 			pointHeight = (float)(heightmap->rows[i][j]);  
-			terrainHeights[i*terrainGridWidth + j] = (float)pointHeight;
+			terrainHeights[i*terrainGridWidth + j] = (float)pointHeight*scale;
 		}
 
 	for (int i = (terrainGridLength*terrainGridWidth) - 1; i >= 0; i--) 
   	printf("%lf ", terrainHeights[i]);
-// free the image's memory 
+
 	if (normals)
 		terrainComputeNormals();
+
 	tgaDestroy(info);
 	
 	return(TERRAIN_OK); 
 }
-
+	
 
 int terrainCreateDL(float xOffset, float yOffset, float zOffset) {
 
 	GLuint terrainDL;
 	float startW,startL;
-	int i,j,aux;
+	int i,j;
 
-	// compute the initial point of the terrain on the XZ plane
 	startW = terrainGridWidth / 2.0 - terrainGridWidth;
 	startL = - terrainGridLength / 2.0 + terrainGridLength;
-	
-	// Create the id for the display list
+
 	terrainDL = glGenLists(1);
 
-	// create the display list
 	glNewList(terrainDL,GL_COMPILE);
-	
-	// test for normals
-	if (terrainNormals != NULL) {
+	if (terrainNormals != NULL && terrainColors != NULL) {
 		glColorMaterial(GL_FRONT, GL_DIFFUSE);
 		glEnable(GL_COLOR_MATERIAL);
 	}
 
-	// generate n-1 strips, where n = terrainGridLength
-	// for each vertex test if colors and normals are enabled
 	for (i = 0 ; i < terrainGridLength-1; i++) {
 		glBegin(GL_TRIANGLE_STRIP);
 		for (j = 0;j < terrainGridWidth; j++) {
-			aux = 3*((i+1)*terrainGridWidth + j);
+		
 			if (terrainColors != NULL) 
-				glColor3f(terrainColors[aux],
-					terrainColors[aux+1],
-					terrainColors[aux+2]);
+				glColor3f(terrainColors[3*((i+1)*terrainGridWidth + j)],
+						  terrainColors[3*((i+1)*terrainGridWidth + j)+1],
+						  terrainColors[3*((i+1)*terrainGridWidth + j)+2]);
 			if (terrainNormals != NULL)
-				glNormal3f(terrainNormals[aux],
-					terrainNormals[aux+1],
-					terrainNormals[aux+2]);
+				glNormal3f(terrainNormals[3*((i+1)*terrainGridWidth + j)],
+						  terrainNormals[3*((i+1)*terrainGridWidth + j)+1],
+						  terrainNormals[3*((i+1)*terrainGridWidth + j)+2]);
 			glVertex3f(
 				startW + j + xOffset,
 				terrainHeights[(i+1)*terrainGridWidth + (j)] + yOffset,
 				startL - (i+1) + zOffset);
 
-			aux = 3*(i*terrainGridWidth + j);
 			if (terrainColors != NULL) 
-				glColor3f(terrainColors[aux],
-					terrainColors[aux+1],
-					terrainColors[aux+2]);
+				glColor3f(terrainColors[3*(i*terrainGridWidth + j)],
+						  terrainColors[3*(i*terrainGridWidth + j)+1],
+						  terrainColors[3*(i*terrainGridWidth + j)+2]);
 			if (terrainNormals != NULL)
-				glNormal3f(terrainNormals[aux],
-					terrainNormals[aux+1],
-					terrainNormals[aux+2]);
+				glNormal3f(terrainNormals[3*(i*terrainGridWidth + j)],
+						  terrainNormals[3*(i*terrainGridWidth + j)+1],
+						  terrainNormals[3*(i*terrainGridWidth + j)+2]);
 			glVertex3f(
 				startW + j + xOffset, 
 				terrainHeights[(i)*terrainGridWidth + j] + yOffset,
@@ -270,11 +260,8 @@ int terrainCreateDL(float xOffset, float yOffset, float zOffset) {
 		glEnd();
 	}
 	glEndList();
-
-	// return the list index so that the application can use it
 	return(terrainDL);
 }
-
 
 float terrainGetHeight(int x, int z) {
 
@@ -291,40 +278,6 @@ float terrainGetHeight(int x, int z) {
 
 	return(terrainHeights[zt * terrainGridWidth + xt]);
 }
-
-int terrainScale(float min,float max) {
-
-	float amp,aux,min1,max1,height;
-	int total,i;
-
-	if (terrainHeights == NULL)
-		return(TERRAIN_ERROR_NOT_INITIALISED);
-
-	if (min > max) {
-		aux = min;
-		min = max;
-		max = aux;
-	}
-
-	amp = max - min;
-	total = terrainGridWidth * terrainGridLength;
-
-	min1 = terrainHeights[0];
-	max1 = terrainHeights[0];
-	for(i=1;i < total ; i++) {
-		if (terrainHeights[i] > max1)
-			max1 = terrainHeights[i];
-		if (terrainHeights[i] < min1)
-			min1 = terrainHeights[i];
-	}
-	for(i=0;i < total; i++) {
-		height = (terrainHeights[i] - min1) / (max1-min1);
-		terrainHeights[i] = height * amp - min;
-	}
-
-	return(TERRAIN_OK);
-}
-	
 
 
 void terrainDestroy() {

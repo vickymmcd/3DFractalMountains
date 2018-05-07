@@ -98,15 +98,15 @@ void tgaLoadImageData(FILE *file, tgaInfo *info) {
 // total is the number of bytes we'll have to read
 	total = info->height * info->width * mode;
 	
-	fread(info->heightMapData,sizeof(unsigned char),total,file);
+	fread(info->imageData,sizeof(unsigned char),total,file);
 
 // mode=3 or 4 implies that the image is RGB(A). However TGA
 // stores it as BGR(A) so we'll have to swap R and B.
 	if (mode >= 3)
 		for (i=0; i < total; i+= mode) {
-			aux = info->heightMapData[i];
-			info->heightMapData[i] = info->heightMapData[i+2];
-			info->heightMapData[i+2] = aux;
+			aux = info->imageData[i];
+			info->imageData[i] = info->imageData[i+2];
+			info->imageData[i+2] = aux;
 		}
 }	
 
@@ -159,11 +159,11 @@ tgaInfo * tgaLoad(char *filename) {
 // total is the number of bytes to read
 	total = info->height * info->width * mode;
 // allocate memory for image pixels
-	info->heightMapData = (unsigned char *)malloc(sizeof(unsigned char) * 
+	info->imageData = (unsigned char *)malloc(sizeof(unsigned char) * 
 															total);
 
 // check to make sure we have the memory required
-	if (info->heightMapData == NULL) {
+	if (info->imageData == NULL) {
 		info->status = TGA_ERROR_MEMORY;
 		fclose(file);
 		return(info);
@@ -205,34 +205,34 @@ void tgaRGBtoGreyscale(tgaInfo *info) {
 
 // convert pixels: greyscale = o.30 * R + 0.59 * G + 0.11 * B
 	for (i = 0,j = 0; j < info->width * info->height; i +=mode, j++)
-		newImageData[j] =	(unsigned char)(0.30 * info->heightMapData[i] + 
-						0.59 * info->heightMapData[i+1] +
-						0.11 * info->heightMapData[i+2]);
+		newImageData[j] =	(unsigned char)(0.30 * info->imageData[i] + 
+						0.59 * info->imageData[i+1] +
+						0.11 * info->imageData[i+2]);
 
 
 //free old image data
-	free(info->heightMapData);
+	free(info->imageData);
 
 // reassign pixelDepth and type according to the new image type
 	info->pixelDepth = 8;
 	info->type = 3;
-// reassing heightMapData to the new array.
-	info->heightMapData = newImageData;
+// reassing imageData to the new array.
+	info->imageData = newImageData;
 }
 
 // takes a screen shot and saves it to a TGA image
 int tgaGrabScreenSeries(char *filename, int x,int y, int w, int h) {
 	
-	unsigned char *heightMapData;
+	unsigned char *imageData;
 
 // allocate memory for the pixels
-	heightMapData = (unsigned char *)malloc(sizeof(unsigned char) * w * h * 4);
+	imageData = (unsigned char *)malloc(sizeof(unsigned char) * w * h * 4);
 
 // read the pixels from the frame buffer
-	glReadPixels(x,y,w,h,GL_RGBA,GL_UNSIGNED_BYTE, (GLvoid *)heightMapData);
+	glReadPixels(x,y,w,h,GL_RGBA,GL_UNSIGNED_BYTE, (GLvoid *)imageData);
 
 // save the image 
-	return(tgaSaveSeries(filename,w,h,32,heightMapData));
+	return(tgaSaveSeries(filename,w,h,32,imageData));
 }
 
 // saves an array of pixels as a TGA image
@@ -240,7 +240,7 @@ int tgaSave(char			*filename,
 			 short int		width, 
 			 short int		height, 
 			 unsigned char	pixelDepth,
-			 unsigned char	*heightMapData) {
+			 unsigned char	*imageData) {
 
 	unsigned char cGarbage = 0, type,mode,aux;
 	short int iGarbage = 0;
@@ -281,16 +281,16 @@ int tgaSave(char			*filename,
 // convert the image data from RGB(a) to BGR(A)
 	if (mode >= 3)
 	for (i=0; i < width * height * mode ; i+= mode) {
-		aux = heightMapData[i];
-		heightMapData[i] = heightMapData[i+2];
-		heightMapData[i+2] = aux;
+		aux = imageData[i];
+		imageData[i] = imageData[i+2];
+		imageData[i+2] = aux;
 	}
 
 // save the image data
-	fwrite(heightMapData, sizeof(unsigned char), width * height * mode, file);
+	fwrite(imageData, sizeof(unsigned char), width * height * mode, file);
 	fclose(file);
 // release the memory
-	free(heightMapData);
+	free(imageData);
 
 	return(TGA_OK);
 }
@@ -300,7 +300,7 @@ int tgaSaveSeries(char		*filename,
 			 short int		width, 
 			 short int		height, 
 			 unsigned char	pixelDepth,
-			 unsigned char	*heightMapData) {
+			 unsigned char	*imageData) {
 	
 	char *newFilename;
 	int status;
@@ -310,7 +310,7 @@ int tgaSaveSeries(char		*filename,
 
 	sprintf(newFilename,"%s%d.tga",filename,savedImages);
 // save the image
-	status = tgaSave(newFilename,width,height,pixelDepth,heightMapData);
+	status = tgaSave(newFilename,width,height,pixelDepth,imageData);
 //increase the counter
 	savedImages++;
 	return(status);
@@ -321,7 +321,7 @@ int tgaSaveSeries(char		*filename,
 void tgaDestroy(tgaInfo *info) {
 
 	if (info != NULL) {
-		free(info->heightMapData);
+		free(info->imageData);
 		free(info);
 	}
 }
