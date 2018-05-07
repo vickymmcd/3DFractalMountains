@@ -42,7 +42,11 @@ The diamond square algorithm isn't a perfect terrain generating algorithm, but a
 
 ## Visualizing in OpenGL
 
-To visualize our mountain in OpenGL we used...
+To visualize our mountain in OpenGL we used GLUT (OpenGL Utility Toolkit) as well as a wrapper library/tutorial for rendering heightmaps in GLUT provided by Lighthouse3D. The Lighthouse3D wrapper library helped us learn about calculating normals for a given heightmap -- a necessary process to provide smooth lighting across a heightmap. Additionally the wrapper introduced us to OpenGL display lists which doubled the performance of our heightmap rendering by precompiling the rendering of our heightmap and its normals. 
+
+The final result of our OpenGL rendering looked as follows: 
+
+![](https://raw.githubusercontent.com/vickymmcd/3DFractalMountains/master/docs/images/mountain_range.png)
 
 ## 3D Printing
 
